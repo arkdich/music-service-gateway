@@ -6,14 +6,12 @@ services:
     container_name: nginx-proxy-container-hub
     ports:
       - '3000:80'
-    depends_on:
-      - api
-      - auth-service
+    volumes:
+      - ./src/assets:/app/assets
 
   database:
     image: 'arkdich/music-service-db'
     container_name: music-service-db-container-hub
-    attach: false
     env_file:
       - .env.local
     ports:
@@ -22,13 +20,13 @@ services:
       - ./pg-logs:/db/logs
     environment:
       - POSTGRES_INITDB_ARGS=-c shared_preload_libraries='pg_cron' -c cron.database_name='music_service'
+    attach: false
 
   auth-service:
     image: arkdich/nodejs-auth-service
+    container_name: nodejs-auth-service-container-hub
     depends_on:
       - database
-    container_name: nodejs-auth-service-container-hub
-    attach: false
     env_file:
       - .env.local
     environment:
@@ -37,15 +35,17 @@ services:
       - DB_HOST=database
     ports:
       - '4000:4000'
+    attach: false
 
   api:
     image: 'arkdich/music-service-api'
+    container_name: music-service-api-container-hub
     depends_on:
       - database
-    container_name: music-service-api-container-hub
     environment:
       - PORT_API=4001
       - PORT_DB=5432
       - DB_HOST=database
     ports:
       - '4001:4001'
+    attach: false
