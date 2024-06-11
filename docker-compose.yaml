@@ -4,6 +4,9 @@ services:
       context: .
       dockerfile: ./dockerfile
     container_name: nginx-proxy-container-hub
+    depends_on:
+      - auth-service
+      - api
     ports:
       - '3000:80'
     volumes:
@@ -40,6 +43,8 @@ services:
   api:
     image: 'arkdich/music-service-api'
     container_name: music-service-api-container-hub
+    env_file:
+      - .env.local
     depends_on:
       - database
     environment:
