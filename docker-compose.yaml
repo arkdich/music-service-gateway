@@ -1,9 +1,11 @@
 services:
-  proxy:
+  gateway:
     build:
       context: .
       dockerfile: ./dockerfile
-    container_name: nginx-proxy-container-hub
+      tags:
+        - arkdich/nginx-gateway
+    container_name: nginx-gateway-container-hub
     depends_on:
       - auth-service
       - api
